@@ -2,6 +2,10 @@
 #include <string>
 #include <array>
 #include <typeinfo>
+#include <map>
+#include <set>
+#include <vector>
+#include <list>
 
 using namespace std;
 
@@ -76,6 +80,11 @@ class Aresta {
 
     public:
         Aresta() {}
+
+        Aresta(Vertice origem, Vertice destino) {
+            this->origem = origem;
+            this->destino = destino;
+        }
         
         Aresta(int peso, string label, Vertice origem, Vertice destino) {
             this->peso = peso;
@@ -156,6 +165,74 @@ class Grafo {
         }
 };
 
+/*class ListaAdjacencia {
+
+    private:
+        map<Vertice, list<Aresta>> adjacencies;
+
+    public:
+        ListaAdjacencia() {}
+
+        void setListaAdjacencia(map<Vertice, list<Aresta>> adjacencies) {
+            this->adjacencies = adjacencies;
+        }
+
+        void addAresta(Vertice source, Vertice target) {
+            list<Aresta> list;
+            if (adjacencies.find(source) == adjacencies.end()) {
+                adjacencies[source] = list;
+            } else {
+                list = adjacencies[source];
+            }
+            list.push_back(Aresta(source, target));
+        }
+
+        list<Aresta> getAdjacent(Vertice source) {
+            return adjacencies[source];
+        }
+
+        void reverseAresta(Aresta e) {
+            adjacencies[e.getOrigem()].remove(e);
+            addAresta(e.getDestino(), e.getOrigem());
+        }
+
+        void reverseGraph() {
+            setListaAdjacencia(getReversedList().adjacencies);
+        }
+
+        ListaAdjacencia getReversedList() {
+            ListaAdjacencia newlist;
+            for (auto &Arestas : adjacencies) {
+                for (auto &e : Arestas.second) {
+                    newlist.addAresta(e.getDestino(), e.getOrigem());
+                }
+            }
+            return newlist;
+        }
+
+        set<Vertice> getSourceVerticeSet() {
+            set<Vertice> sourceVertices;
+            for (auto &entry : adjacencies) {
+                sourceVertices.insert(entry.first);
+            }
+            return sourceVertices;
+        }
+
+        vector<Aresta> getAllArestas() {
+            vector<Aresta> Arestas;
+            for (auto &entry : adjacencies) {
+                Arestas.insert(Arestas.end(), entry.second.begin(), entry.second.end());
+            }
+            return Arestas;
+        }
+
+        void clear() {
+            if (!adjacencies.empty()) {
+                adjacencies.clear();
+            }
+        }
+};*/
+
 int index = 0;
 array<Vertice, 100> pilha = {};
 array<array<Vertice, 100>, 100> SCC = {};
@@ -163,6 +240,12 @@ array<array<Vertice, 100>, 100> SCC = {};
 
 int main() {
     
+    return 0;
+}
+
+array<array<Vertice, 100>, 100> tarjan() {
+
+    return SCC;
 }
 
 array<array<Vertice, 100>, 100> tarjanInit() {
@@ -170,9 +253,4 @@ array<array<Vertice, 100>, 100> tarjanInit() {
     pilha = {};
     SCC = {};
     return tarjan();
-}
-
-array<array<Vertice, 100>, 100> tarjan() {
-
-    return SCC;
 }
