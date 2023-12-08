@@ -158,7 +158,7 @@ class Grafo {
 
 int index = 0;
 array<Vertice, 100> pilha = {};
-array<array<Vertice, 100>, 1000> SCC = {};
+array<array<Vertice, 100>, 100> SCC = {};
 
 
 int main() {
@@ -173,6 +173,6 @@ array<array<Vertice, 100>, 100> tarjanInit() {
 }
 
 array<array<Vertice, 100>, 100> tarjan() {
-    
+
     return SCC;
 }
