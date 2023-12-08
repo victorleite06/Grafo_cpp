@@ -199,16 +199,6 @@ bool contemNaPilha(Vertice n) {
     return contem;
 }
 
-Vertice removeLista(array<Vertice, 100> lista, int pos) {
-    Vertice ver = lista[pos];
-
-    for(int i = pos; i < lista.size() - 1; i++) {
-        lista[pos] = lista[pos + 1];
-    }
-
-    return ver;
-}
-
 array<array<Vertice, 100>, 100> tarjan(Vertice v) {
         v.setIndex(index);
         v.setLowlink(index);
@@ -227,7 +217,12 @@ array<array<Vertice, 100>, 100> tarjan(Vertice v) {
             Vertice n;
             array<Vertice, 100> component = {};
             do {
-                n = removeLista(pilha, 0);
+                n = pilha[0];
+                
+                for(int i = 0; i < pilha.size() - 1; i++) {
+                    pilha[i] = pilha[i + 1];
+                }
+
                 component[component.size()] = n;
             } while (n.getId() != v.getId());
             SCC[SCC.size()] = component;
