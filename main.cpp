@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <string>
 #include <array>
 #include <typeinfo>
@@ -12,6 +13,7 @@ using namespace std;
 class Vertice {
 
     private:
+        int id;
         int peso;
         string label;
         
@@ -20,14 +22,19 @@ class Vertice {
         int index = -1;
 
     public:
-        Vertice() {}
+        Vertice() {this->id = rand();}
 
         Vertice(int peso, string label) {
+            this->id = rand();
             this->peso = peso;
             this->label = label;
         }
 
         ~Vertice() {}
+
+        int getId() {
+            return this->id;
+        }
 
         void setPeso(int peso) {
             this->peso = peso;
@@ -148,11 +155,11 @@ class Grafo {
             this->vertices = vertices;
         }
 
-        array<Aresta, 100> getArestas() {
+        array<Aresta, 100> getarestas() {
             return this->arestas;
         }
 
-        void setArestas(array<Aresta, 100> arestas) {
+        void setarestas(array<Aresta, 100> arestas) {
             this->arestas = arestas;
         }
 
@@ -165,85 +172,57 @@ class Grafo {
         }
 };
 
-/*class ListaAdjacencia {
-
-    private:
-        map<Vertice, list<Aresta>> adjacencies;
-
-    public:
-        ListaAdjacencia() {}
-
-        void setListaAdjacencia(map<Vertice, list<Aresta>> adjacencies) {
-            this->adjacencies = adjacencies;
-        }
-
-        void addAresta(Vertice source, Vertice target) {
-            list<Aresta> list;
-            if (adjacencies.find(source) == adjacencies.end()) {
-                adjacencies[source] = list;
-            } else {
-                list = adjacencies[source];
-            }
-            list.push_back(Aresta(source, target));
-        }
-
-        list<Aresta> getAdjacent(Vertice source) {
-            return adjacencies[source];
-        }
-
-        void reverseAresta(Aresta e) {
-            adjacencies[e.getOrigem()].remove(e);
-            addAresta(e.getDestino(), e.getOrigem());
-        }
-
-        void reverseGraph() {
-            setListaAdjacencia(getReversedList().adjacencies);
-        }
-
-        ListaAdjacencia getReversedList() {
-            ListaAdjacencia newlist;
-            for (auto &Arestas : adjacencies) {
-                for (auto &e : Arestas.second) {
-                    newlist.addAresta(e.getDestino(), e.getOrigem());
-                }
-            }
-            return newlist;
-        }
-
-        set<Vertice> getSourceVerticeSet() {
-            set<Vertice> sourceVertices;
-            for (auto &entry : adjacencies) {
-                sourceVertices.insert(entry.first);
-            }
-            return sourceVertices;
-        }
-
-        vector<Aresta> getAllArestas() {
-            vector<Aresta> Arestas;
-            for (auto &entry : adjacencies) {
-                Arestas.insert(Arestas.end(), entry.second.begin(), entry.second.end());
-            }
-            return Arestas;
-        }
-
-        void clear() {
-            if (!adjacencies.empty()) {
-                adjacencies.clear();
-            }
-        }
-};*/
-
 int index = 0;
 array<Vertice, 100> pilha = {};
 array<array<Vertice, 100>, 100> SCC = {};
+Grafo grafo;
 
+array<Aresta, 100> getAdjascentes(Vertice v) {
+    array<Aresta, 100> adjascentes = {};
 
-int main() {
-    
-    return 0;
+    for(Aresta ar : grafo.getarestas()) {
+        if(ar.getDestino().getId() == v.getId() || ar.getOrigem().getId() == v.getId()) {
+            adjascentes[adjascentes.size()] = ar;
+        }
+    }
+
+    return adjascentes;
 }
 
-array<array<Vertice, 100>, 100> tarjan() {
+bool contemNaPilha(Vertice n) {
+    bool contem = false;
+    for(Vertice ve : pilha) {
+        if(ve.getId() == n.getId()) {
+            contem = true;
+        }
+    }
+    return contem;
+}
+
+array<array<Vertice, 100>, 100> tarjan(Vertice v) {
+        v.setIndex(index);
+        v.setLowlink(index);
+        index++;
+        pilha[0] = v;
+        for (Aresta e : getAdjascentes(v)) {
+            Vertice n = e.getDestino();
+            if (n.getIndex() == -1) {
+                tarjan(n);
+                v.setLowlink(min(v.getLowlink(), n.getLowlink()));
+            } else if (contemNaPilha(n)) {
+                v.setLowlink(min(v.getLowlink(), n.getIndex()));
+            }
+        }
+        if (v.getLowlink() == v.getIndex()) {
+            Vertice n;
+            array<Vertice, 100> component = {};
+            do {
+                n = pilha.remove(0);
+                component.add(n);
+            } while (n != v);
+            SCC.add(component);
+        }
+
 
     return SCC;
 }
@@ -252,5 +231,11 @@ array<array<Vertice, 100>, 100> tarjanInit() {
     index = 0;
     pilha = {};
     SCC = {};
-    return tarjan();
+    return tarjan(pilha[0]);
+}
+
+int main() {
+    
+    tarjanInit();
+    return 0;
 }
